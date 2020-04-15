@@ -1,0 +1,16 @@
+.DS_Store
+
+.vscode
+.devcontainer
+
+composer.lock
+
+.php_cs.cache
+
+*.tmp
+
+vendor
+
+cov-html
+cov.txt
+cov.xml

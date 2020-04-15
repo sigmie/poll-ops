@@ -1,0 +1,38 @@
+{
+    "name": "sigmie/promises",
+    "description": "PHP package for handling async chains'",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nico",
+            "email": "nico@sigmie.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Sigmie\\Promises\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sigmie\\Promises\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.4"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.18",
+        "phpunit/phpunit": "^9.1",
+        "squizlabs/php_codesniffer": "^3.5",
+        "symfony/var-dumper": "^5.0"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}
