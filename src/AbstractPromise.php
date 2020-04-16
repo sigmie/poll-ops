@@ -5,13 +5,22 @@ declare(strict_types=1);
 namespace Sigmie\Promises;
 
 use Closure;
-use Exception;
+use Sigmie\Promises\Contracts\Promise as PromiseInterface;
+use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
+use Sigmie\Promises\Exceptions\PromiseRejection;
 
 abstract class AbstractPromise
 {
     private ?AbstractPromise $successor = null;
 
-    final public function setSuccessor(AbstractPromise $successor)
+    /**
+     * Method implementing the CoR pattern for
+     * creating promise chains
+     *
+     * @param PromiseInterface $successor
+     * @return void
+     */
+    final public function setSuccessor(PromiseInterface $successor): void
     {
         if ($this->successor === null) {
             $this->successor = $successor;
@@ -23,29 +32,56 @@ abstract class AbstractPromise
 
     final public function handle($args = null, $then, Closure $catch)
     {
-        $next = ($this->successor === null) ? fn () => new Acceptance($then, func_get_args())
-            : fn ($resolve) => $this->successor->handle($resolve, $then, $catch);
+        $next = ($this->successor !== null)
+            ? fn ($args) => $this->successor->handle($args, $then, $catch)
+            : fn () => new Settled();
+
+        $catch  = fn (string $reason) => new Rejected($catch, new PromiseRejection($reason));
 
         $response = $this->execute(
             $args,
-            $next,
-            fn (Exception $reason) => new Rejection($catch, $reason)
+            fn () => new Pending(func_get_args(), $catch, $this),
+            $catch
         );
 
-        if ($response instanceof Rejection) {
-            return $response->reject();
+        if ($response instanceof Pending) {
+            $response = $response->settle($this);
         }
 
-        if ($response instanceof Acceptance) {
-            return $response->resolve();
+        if ($response instanceof Fulfilled) {
+            $response = $next($response->params());
         }
 
-        if ($response === null) {
-            return;
+        if ($response instanceof Rejected) {
+            $response = $response->reject();
         }
 
-        return $response;
+        if ($response instanceof Settled) {
+            return $response;
+        }
+
+        // Promise execute methods should always return the
+        // resolve or the reject method in order for the
+        // chain to be aware of what to do next
+        throw new UnknownPromiseResponse();
     }
 
-    abstract public function execute($args, Closure $resolve, Closure $reject);
+    /**
+     * Promise execution
+     *
+     * @param array $args
+     * @param Closure $resolve
+     * @param Closure $reject
+     *
+     * @return Pending|Rejected
+     */
+    abstract public function execute(array $args, Closure $resolve, Closure $reject);
+
+    abstract public function verify(): bool;
+
+    abstract public function maxAttempts(): int;
+
+    abstract public function attemptsInterval(): int;
+
+    abstract public function exceptionMessage(): string;
 }

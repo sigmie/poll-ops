@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Sigmie\Promises;
 
 use Closure;
-use Exception;
+use Sigmie\Promises\Exceptions\UnhandledRejection;
 
-class PromiseAll
+class Chain
 {
     private array $chain = [];
 
@@ -27,15 +27,10 @@ class PromiseAll
         return $this;
     }
 
-    public function then(Closure $closure)
-    {
-        $this->then = $closure;
-    }
-
-    public function proceed($argument)
+    public function proceed($arguments = [])
     {
         if ($this->catch === null) {
-            throw new Exception('Unhandled rejection');
+            throw new UnhandledRejection();
         }
 
         $first = null;
@@ -50,6 +45,6 @@ class PromiseAll
             $first->setSuccessor($successor);
         }
 
-        return $first->handle($argument, $this->then, $this->catch);
+        return $first->handle($arguments, $this->then, $this->catch);
     }
 }

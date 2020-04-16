@@ -6,8 +6,9 @@ namespace Sigmie\Promises;
 
 use Closure;
 use Exception;
+use Sigmie\Promises\Exceptions\PromiseRejection;
 
-class Rejection
+class Rejected
 {
     private Closure $rejection;
 
@@ -21,6 +22,8 @@ class Rejection
 
     public function reject()
     {
-        return ($this->rejection)($this->reason);
+        ($this->rejection)($this->reason);
+
+        return new Settled;
     }
 }
