@@ -4,46 +4,82 @@ declare(strict_types=1);
 
 namespace Sigmie\Promises;
 
-use Closure;
+use Sigmie\Promises\Contracts\Promise;
+use Sigmie\Promises\Exceptions\PromiseRejection;
 
 class Pending
 {
-    private Closure $catch;
-
+    /**
+     * Parameters resolved by the promise
+     *
+     * @var array
+     */
     private array $params;
 
-    private AbstractPromise $promise;
+    /**
+     * Promise instance
+     *
+     * @var Promise
+     */
+    private Promise $promise;
 
+    /**
+     * @var callable
+     */
     private static $sleep = 'sleep';
 
-    public function __construct(array $params, $catch, $promise)
+    /**
+     * Constructor
+     *
+     * @param array $params
+     * @param Promise $promise
+     */
+    public function __construct(array $params, Promise $promise)
     {
         $this->params = $params;
-        $this->catch = $catch;
         $this->promise = $promise;
     }
 
-    public static function setSleep(callable $sleep)
+    /**
+     * Static sleep setter for testing purposes
+     *
+     * @param callable $sleep
+     *
+     * @return void
+     */
+    public static function setSleep(callable $sleep): void
     {
         self::$sleep = $sleep;
     }
 
+    /**
+     * Settle method deciding if the given promise was
+     * fulfilled or not
+     *
+     * @return Fulfilled|Rejected
+     */
     public function settle()
     {
         if ($this->fulfilled()) {
             return new Fulfilled($this->params);
         }
 
-        ($this->catch)('Unable to verify promise fullifilment');
-
-        return new Settled;
+        return new Rejected(new PromiseRejection('Promise verification failed after %s attempts'));
     }
 
-    private function fulfilled()
+    /**
+     * Verify the promise fulfillment after the promise
+     * defined delays and return false if the promise
+     * verification failed after the maximum attempts
+     * were reached
+     *
+     * @return bool
+     */
+    private function fulfilled(): bool
     {
         $attempts = 0;
 
-        while ($attempts < $this->promise->maxAttempts()) {;
+        while ($attempts < $this->promise->maxAttempts()) {
             if ($this->promise->verify()) {
                 return true;
             }

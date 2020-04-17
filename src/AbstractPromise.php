@@ -6,12 +6,17 @@ namespace Sigmie\Promises;
 
 use Closure;
 use Sigmie\Promises\Contracts\Promise as PromiseInterface;
-use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
 use Sigmie\Promises\Exceptions\PromiseRejection;
+use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
 
-abstract class AbstractPromise
+abstract class AbstractPromise implements PromiseInterface
 {
-    private ?AbstractPromise $successor = null;
+    /**
+     * Promise successor
+     *
+     * @var null|PromiseInterface
+     */
+    private ?PromiseInterface $successor = null;
 
     /**
      * Method implementing the CoR pattern for
@@ -30,22 +35,30 @@ abstract class AbstractPromise
         $this->successor->setSuccessor($successor);
     }
 
-    final public function handle($args = null, $then, Closure $catch)
+    /**
+     * Handle promise chain part
+     *
+     * @param array $args
+     * @param Closure $catch
+     *
+     * @return Settled
+     *
+     * @throws UnknownPromiseResponse
+     */
+    final public function handle(array $args, Closure $catch): Settled
     {
         $next = ($this->successor !== null)
-            ? fn ($args) => $this->successor->handle($args, $then, $catch)
+            ? fn ($resolveArgs) => $this->successor->handle($resolveArgs, $catch)
             : fn () => new Settled();
-
-        $catch  = fn (string $reason) => new Rejected($catch, new PromiseRejection($reason));
 
         $response = $this->execute(
             $args,
-            fn () => new Pending(func_get_args(), $catch, $this),
-            $catch
+            fn () => new Pending(func_get_args(), $this),
+            fn (string $reason) => new Rejected(new PromiseRejection($reason))
         );
 
         if ($response instanceof Pending) {
-            $response = $response->settle($this);
+            $response = $response->settle();
         }
 
         if ($response instanceof Fulfilled) {
@@ -53,7 +66,7 @@ abstract class AbstractPromise
         }
 
         if ($response instanceof Rejected) {
-            $response = $response->reject();
+            $response = $response->reject($catch);
         }
 
         if ($response instanceof Settled) {
@@ -77,11 +90,31 @@ abstract class AbstractPromise
      */
     abstract public function execute(array $args, Closure $resolve, Closure $reject);
 
+    /**
+     * Promise verification
+     *
+     * @return bool
+     */
     abstract public function verify(): bool;
 
+    /**
+     * Max promise verification attempts
+     *
+     * @return int
+     */
     abstract public function maxAttempts(): int;
 
+    /**
+     * Promise verification attempts interval
+     *
+     * @return int
+     */
     abstract public function attemptsInterval(): int;
 
+    /**
+     * Promise rejection exception message
+     *
+     * @return string
+     */
     abstract public function exceptionMessage(): string;
 }

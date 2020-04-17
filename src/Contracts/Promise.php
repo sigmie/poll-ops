@@ -7,6 +7,7 @@ namespace Sigmie\Promises\Contracts;
 use Closure;
 use Sigmie\Promises\Pending;
 use Sigmie\Promises\Rejected;
+use Sigmie\Promises\Settled;
 
 interface Promise
 {
@@ -30,17 +31,41 @@ interface Promise
      */
     public function execute(array $args, Closure $resolve, Closure $reject);
 
-    public function handle($args = null, $then, Closure $catch);
+    /**
+     * Promise handle
+     *
+     * @param array $args
+     * @param Closure $catch
+     *
+     * @return Settled
+     */
+    public function handle(array $args, Closure $catch): Settled;
 
+    /**
+     * Promise fulfillment verification
+     *
+     * @return bool
+     */
     public function verify(): bool;
 
+    /**
+     * Max promise verification attempts
+     *
+     * @return int
+     */
     public function maxAttempts(): int;
 
+    /**
+     * Promise verification attempts interval
+     *
+     * @return int
+     */
     public function attemptsInterval(): int;
 
+    /**
+     * Promise verification exception message
+     *
+     * @return string
+     */
     public function exceptionMessage(): string;
-
-    // public function then();
-
-    // public function catch();
 }

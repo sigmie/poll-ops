@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Sigmie\Promises\Tests\Unit;
 
-use Sigmie\Promises\Chain;
-use Sigmie\Promises\Pending;
-use Sigmie\Promises\Promise;
-use Sigmie\Promises\Fulfilled;
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\Tests\Fakes\FakeObject;
+use Sigmie\Promises\Chain;
 use Sigmie\Promises\Exceptions\UnhandledRejection;
 use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
+use Sigmie\Promises\Fulfilled;
+use Sigmie\Promises\Pending;
+use Sigmie\Promises\Promise;
+use Sigmie\Promises\Tests\Fakes\FakeObject;
 
 if (!function_exists('Sigmie\Promises\Tests\Unit\sleep')) {
     function sleep()

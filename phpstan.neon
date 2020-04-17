@@ -2,3 +2,7 @@ parameters:
 	level: 5
 	paths:
 		- src
+	ignoreErrors:
+		# AbstractPromise throw new UnknownPromiseResponse() is
+		# reachable is promise execute returns null
+		- '/Unreachable statement - code above always terminates./'

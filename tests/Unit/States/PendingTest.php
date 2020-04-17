@@ -37,7 +37,7 @@ class PendingTest extends TestCase
         $promiseMock->method('maxAttempts')->willReturn(3);
         $promiseMock->method('attemptsInterval')->willReturn(10);
 
-        $pending = new Pending([], fn () => null, $promiseMock);
+        $pending = new Pending([], $promiseMock);
 
         $promiseMock->expects($this->exactly(1))->method('verify');
 
@@ -49,16 +49,14 @@ class PendingTest extends TestCase
      */
     public function settle_calls_promise_verify_max_times_before_returning_false(): void
     {
-        $fakeObjectMock = $this->createMock(FakeObject::class);
         $promiseMock = $this->createMock(AbstractPromise::class);
         $promiseMock->method('verify')->willReturn(false);
         $promiseMock->method('maxAttempts')->willReturn(3);
         $promiseMock->method('attemptsInterval')->willReturn(10);
 
-        $pending = new Pending([], fn () => $fakeObjectMock->someMethod(), $promiseMock);
+        $pending = new Pending([], $promiseMock);
 
         $promiseMock->expects($this->exactly(3))->method('verify');
-        $fakeObjectMock->expects($this->once())->method('someMethod');
 
         $pending->settle();
     }
@@ -73,7 +71,7 @@ class PendingTest extends TestCase
         $promiseMock->method('maxAttempts')->willReturn(3);
         $promiseMock->method('attemptsInterval')->willReturn(10);
 
-        $pending = new Pending([], fn () => null, $promiseMock);
+        $pending = new Pending([], $promiseMock);
 
         $response = $pending->settle();
 

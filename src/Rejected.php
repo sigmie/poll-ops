@@ -10,19 +10,31 @@ use Sigmie\Promises\Exceptions\PromiseRejection;
 
 class Rejected
 {
-    private Closure $rejection;
+    /**
+     * Rejection exception
+     *
+     * @var PromiseRejection
+     */
+    private PromiseRejection $reason;
 
-    private Exception $reason;
-
-    public function __construct(Closure $closure, Exception $reason)
+    /**
+     * Constructor
+     *
+     * @param PromiseRejection $reason
+     */
+    public function __construct(PromiseRejection $reason)
     {
-        $this->rejection = $closure;
         $this->reason = $reason;
     }
 
-    public function reject()
+    /**
+     * Call catch function with rejection reason
+     *
+     * @return Settled
+     */
+    public function reject(Closure $catch): Settled
     {
-        ($this->rejection)($this->reason);
+        ($catch)($this->reason);
 
         return new Settled;
     }

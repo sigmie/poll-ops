@@ -18,11 +18,11 @@ class RejectedTest extends TestCase
     public function reject_call_given_closure()
     {
         $fakeMock = $this->createMock(FakeObject::class);
-        $rejected = new Rejected(fn ($message) => $fakeMock->someMethod($message), new PromiseRejection('Something went wrong'));
+        $rejected = new Rejected(new PromiseRejection('Something went wrong'));
 
         $fakeMock->expects($this->once())->method('someMethod')->with(new PromiseRejection('Something went wrong'));
 
-        $rejected->reject();
+        $rejected->reject(fn ($message) => $fakeMock->someMethod($message));
     }
 
     /**
@@ -30,9 +30,9 @@ class RejectedTest extends TestCase
      */
     public function reject_return_settled_instance()
     {
-        $rejected = new Rejected(fn () => null, new PromiseRejection('Something went wrong'));
+        $rejected = new Rejected(new PromiseRejection('Something went wrong'));
 
-        $instance = $rejected->reject();
+        $instance = $rejected->reject(fn () => null);
 
         $this->assertInstanceOf(Settled::class, $instance);
     }

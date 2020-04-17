@@ -9,25 +9,52 @@ use Sigmie\Promises\Exceptions\UnhandledRejection;
 
 class Chain
 {
+    /**
+     * Chain values
+     *
+     * @var array
+     */
     private array $chain = [];
 
+    /**
+     * Catch closure
+     *
+     * @var null|Closure
+     */
     private ?Closure $catch = null;
 
-    private ?Closure $then = null;
-
+    /**
+     * @param array<Promise> $promises
+     */
     public function __construct(array $promises = [])
     {
         $this->chain = $promises;
     }
 
-    public function catch(Closure $closure)
+    /**
+     * Promise rejection catch
+     *
+     * @param Closure $closure
+     *
+     * @return self
+     */
+    public function catch(Closure $closure): self
     {
         $this->catch = $closure;
 
         return $this;
     }
 
-    public function proceed($arguments = [])
+    /**
+     * Proceed with the chain fulfillment
+     *
+     * @param array $arguments
+     *
+     * @return Settled
+     *
+     * @throws UnhandledRejection
+     */
+    public function proceed($arguments = []): Settled
     {
         if ($this->catch === null) {
             throw new UnhandledRejection();
@@ -35,7 +62,6 @@ class Chain
 
         $first = null;
 
-        /** @var AbstractPromise $promise */
         foreach ($this->chain as $successor) {
             if ($first === null) {
                 $first = $successor;
@@ -45,6 +71,6 @@ class Chain
             $first->setSuccessor($successor);
         }
 
-        return $first->handle($arguments, $this->then, $this->catch);
+        return $first->handle($arguments, $this->catch);
     }
 }
