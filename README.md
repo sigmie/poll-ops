@@ -10,8 +10,13 @@
 </a>
 
 <a href="https://packagist.org/packages/sigmie/promises">
+  <img src="https://img.shields.io/packagist/v/sigmie/promises" alt="version"/>
+</a>
+
+<a href="https://packagist.org/packages/sigmie/promises">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"/>
 </a>
+
 </p>
 
 # Promises
