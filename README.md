@@ -2,7 +2,7 @@
 
 <p align="center">
 <a href="https://github.com/sigmie/cli/actions?query=workflow%3ABuild">
-<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/sigmie/promises/build">
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/sigmie/promises/Build">
 </a>
 
 <a href="https://codecov.io/gh/sigmie/promises">
