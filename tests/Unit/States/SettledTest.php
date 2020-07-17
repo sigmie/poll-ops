@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Sigmie\Promises\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\Settled;
+use Sigmie\Promises\States\Settled;
 
 class SettledTest extends TestCase
 {

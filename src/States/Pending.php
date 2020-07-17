@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises;
+namespace Sigmie\Promises\States;
 
 use Sigmie\Promises\Contracts\Promise;
 use Sigmie\Promises\Exceptions\PromiseRejection;

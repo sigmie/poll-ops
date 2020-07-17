@@ -6,9 +6,8 @@ namespace Sigmie\Promises\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Sigmie\Promises\AbstractPromise;
-use Sigmie\Promises\Fulfilled;
-use Sigmie\Promises\Pending;
-use Sigmie\Promises\Tests\Fakes\FakeObject;
+use Sigmie\Promises\States\Fulfilled;
+use Sigmie\Promises\States\Pending;
 
 
 if (!function_exists('Sigmie\Promises\Tests\Unit\sleep')) {

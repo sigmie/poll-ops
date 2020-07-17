@@ -6,6 +6,7 @@ namespace Sigmie\Promises;
 
 use Closure;
 use Sigmie\Promises\Exceptions\UnhandledRejection;
+use Sigmie\Promises\States\Settled;
 
 class Chain
 {

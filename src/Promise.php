@@ -6,6 +6,8 @@ namespace Sigmie\Promises;
 
 use Closure;
 use Sigmie\Promises\Contracts\Promise as PromiseInterface;
+use Sigmie\Promises\States\Pending;
+use Sigmie\Promises\States\Rejected;
 
 class Promise extends AbstractPromise implements PromiseInterface
 {
@@ -42,7 +44,7 @@ class Promise extends AbstractPromise implements PromiseInterface
      * @param Closure $resolve
      * @param Closure $reject
      *
-     * @return Pending|Rejected
+     * @return mixed|Pending|Rejected
      */
     public function execute($args, Closure $resolve, Closure $reject)
     {

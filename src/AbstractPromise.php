@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Sigmie\Promises;
 
 use Closure;
+use Sigmie\Promises\States\Pending;
+use Sigmie\Promises\States\Fulfilled;
+use Sigmie\Promises\States\Rejected;
+use Sigmie\Promises\States\Settled;
 use Sigmie\Promises\Contracts\Promise as PromiseInterface;
 use Sigmie\Promises\Exceptions\PromiseRejection;
 use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
@@ -88,7 +92,7 @@ abstract class AbstractPromise implements PromiseInterface
      *
      * @return Pending|Rejected
      */
-    abstract public function execute(array $args, Closure $resolve, Closure $reject);
+    abstract public function execute(array $args, closure $resolve, closure $reject);
 
     /**
      * Promise verification

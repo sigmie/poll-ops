@@ -6,8 +6,8 @@ namespace Sigmie\Promises\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Sigmie\Promises\Exceptions\PromiseRejection;
-use Sigmie\Promises\Rejected;
-use Sigmie\Promises\Settled;
+use Sigmie\Promises\States\Rejected;
+use Sigmie\Promises\States\Settled;
 use Sigmie\Promises\Tests\Fakes\FakeObject;
 
 class RejectedTest extends TestCase
