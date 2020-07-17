@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Sigmie\Promises\Contracts;
 
 use Closure;
-use Sigmie\Promises\Pending;
-use Sigmie\Promises\Rejected;
-use Sigmie\Promises\Settled;
+use Sigmie\Promises\States\Pending;
+use Sigmie\Promises\States\Rejected;
+use Sigmie\Promises\States\Settled;
 
 interface Promise
 {

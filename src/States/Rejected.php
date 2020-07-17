@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises;
+namespace Sigmie\Promises\States;
 
 use Closure;
 use Exception;

@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Sigmie\Promises\Chain;
 use Sigmie\Promises\Exceptions\UnhandledRejection;
 use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
-use Sigmie\Promises\Fulfilled;
-use Sigmie\Promises\Pending;
+use Sigmie\Promises\States\Fulfilled;
+use Sigmie\Promises\States\Pending;
 use Sigmie\Promises\Promise;
 use Sigmie\Promises\Tests\Fakes\FakeObject;
 
