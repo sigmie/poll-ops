@@ -92,7 +92,7 @@ abstract class AbstractPromise implements PromiseInterface
      *
      * @return Pending|Rejected
      */
-    abstract public function execute(array $args, Closure $resolve, Closure $reject);
+    abstract public function execute(array $args, closure $resolve, closure $reject);
 
     /**
      * Promise verification

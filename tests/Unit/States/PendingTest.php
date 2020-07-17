@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Sigmie\Promises\AbstractPromise;
 use Sigmie\Promises\States\Fulfilled;
 use Sigmie\Promises\States\Pending;
-use Sigmie\Promises\Tests\Fakes\FakeObject;
 
 
 if (!function_exists('Sigmie\Promises\Tests\Unit\sleep')) {
