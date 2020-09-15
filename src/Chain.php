@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises;
+namespace Sigmie\PollOps;
 
 use Closure;
-use Sigmie\Promises\Exceptions\UnhandledRejection;
-use Sigmie\Promises\States\Settled;
+use Sigmie\PollOps\Exceptions\UnhandledRejection;
+use Sigmie\PollOps\States\Settled;
 
 class Chain
 {
@@ -25,11 +25,11 @@ class Chain
     private ?Closure $catch = null;
 
     /**
-     * @param array<Promise> $promises
+     * @param array<DefaultOperation> $PollOps
      */
-    public function __construct(array $promises = [])
+    public function __construct(array $PollOps = [])
     {
-        $this->chain = $promises;
+        $this->chain = $PollOps;
     }
 
     /**

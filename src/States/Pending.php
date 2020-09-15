@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\States;
+namespace Sigmie\PollOps\States;
 
-use Sigmie\Promises\Contracts\Promise;
-use Sigmie\Promises\Exceptions\PromiseRejection;
+use Sigmie\PollOps\Contracts\Operation;
+use Sigmie\PollOps\Exceptions\PromiseRejection;
 
 class Pending
 {
@@ -19,9 +19,9 @@ class Pending
     /**
      * Promise instance
      *
-     * @var Promise
+     * @var Operation
      */
-    private Promise $promise;
+    private Operation $operation;
 
     /**
      * @var callable
@@ -32,12 +32,12 @@ class Pending
      * Constructor
      *
      * @param array $params
-     * @param Promise $promise
+     * @param Operation $operation
      */
-    public function __construct(array $params, Promise $promise)
+    public function __construct(array $params, Operation $operation)
     {
         $this->params = $params;
-        $this->promise = $promise;
+        $this->operation = $operation;
     }
 
     /**
@@ -79,13 +79,13 @@ class Pending
     {
         $attempts = 0;
 
-        while ($attempts < $this->promise->maxAttempts()) {
-            if ($this->promise->verify()) {
+        while ($attempts < $this->operation->maxAttempts()) {
+            if ($this->operation->verify()) {
                 return true;
             }
 
             $attempts++;
-            call_user_func(self::$sleep, $this->promise->attemptsInterval());
+            call_user_func(self::$sleep, $this->operation->attemptsInterval());
         }
 
         return false;

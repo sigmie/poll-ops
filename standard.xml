@@ -8,9 +8,6 @@
         <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses" />
     </rule>
 
-    <rule ref="Squiz.Commenting.FunctionComment.Missing"/>
-    <rule ref="Squiz.Commenting.VariableComment.Missing"/>
-
     <rule ref="Generic.Files.LineLength">
         <properties>
             <property name="lineLimit" value="140"/>

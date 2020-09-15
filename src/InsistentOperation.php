@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises;
+namespace Sigmie\PollOps;
 
-abstract class Task
+use Closure;
+
+class InsistentOperation
 {
     /**
      * Max attempt tries
@@ -12,8 +14,8 @@ abstract class Task
      * @var int
      */
     protected $tries = 30;
-
     /**
+
      * Seconds after which the task should
      * be retried
      *
@@ -26,12 +28,14 @@ abstract class Task
      *
      * @var int
      */
-    public $delay = 90;
+    protected $delay = 90;
 
     /**
      * @var callable
      */
     private static $sleep = 'sleep';
+
+    protected Closure $closure;
 
     /**
      * Static sleep setter for testing purposes
@@ -45,20 +49,36 @@ abstract class Task
         self::$sleep = $sleep;
     }
 
-    /**
-     * Method which will be insisted until
-     * it returns true
-     *
-     * @return bool
-     */
-    abstract public function run(): bool;
+    public function __construct(Closure $closure)
+    {
+        $this->closure = $closure;
+    }
+
+    public function run(): bool
+    {
+        return ($this->closure)();
+    }
+
+    public function delay(int $seconds)
+    {
+        $this->delay = $seconds;
+
+        return $this;
+    }
+
+    public function tries(int $tries): self
+    {
+        $this->tries = $tries;
+
+        return $this;
+    }
 
     /**
      * Insistence code
      *
      * @return bool
      */
-    final public function insist(): bool
+    final public function proceed(): bool
     {
         call_user_func(self::$sleep, $this->delay);
 

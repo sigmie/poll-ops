@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Unit;
+namespace Sigmie\PollOps\Tests\Unit;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\Task;
+use Sigmie\PollOps\InsistentOperation;
 
 
-class TaskTest extends TestCase
+class OperationTest extends TestCase
 {
     /**
-     * @var Task|MockObject
+     * @var InsistentOperation|MockObject
      */
-    private $task;
+    private $operation;
 
     private static $sleepCount = 0;
 
@@ -29,16 +29,16 @@ class TaskTest extends TestCase
 
         self::$sleepCount = 0;
 
-        if (!function_exists('Sigmie\Promises\Tests\Unit\testSleep')) {
+        if (!function_exists('Sigmie\PollOps\Tests\Unit\testSleep')) {
             function testSleep()
             {
-                TaskTest::increaseSleepCount();
+                OperationTest::increaseSleepCount();
             };
         }
 
-        $this->task = $this->getMockBuilder(Task::class)->setMethods(['run'])->getMockForAbstractClass();
+        $this->operation = $this->createMock(InsistentOperation::class);
 
-        Task::setSleep('Sigmie\Promises\Tests\Unit\testSleep');
+        InsistentOperation::setSleep('Sigmie\PollOps\Tests\Unit\testSleep');
     }
 
     /**
@@ -46,9 +46,9 @@ class TaskTest extends TestCase
      */
     public function insist_uses_max_attempts_and_returns_false_if_run_wasnt_successful(): void
     {
-        $this->task->expects($this->exactly(30))->method('run')->willReturn(false);
+        $this->operation->expects($this->exactly(30))->method('run')->willReturn(false);
 
-        $this->assertFalse($this->task->insist());
+        $this->assertFalse($this->operation->proceed());
     }
 
     /**
@@ -56,7 +56,7 @@ class TaskTest extends TestCase
      */
     public function is_called_for_each_try_and_before_any_attempt()
     {
-        $this->assertFalse($this->task->insist());
+        $this->assertFalse($this->operation->proceed());
 
         $this->assertEquals(31, self::$sleepCount);
     }
@@ -66,9 +66,9 @@ class TaskTest extends TestCase
      */
     public function insist_returns_if_succeeded()
     {
-        $this->task->method('run')->willReturn(false, false, true);
+        $this->operation->method('run')->willReturn(false, false, true);
 
-        $this->assertTrue($this->task->insist());
+        $this->assertTrue($this->operation->proceed());
         $this->assertEquals(3, self::$sleepCount);
     }
 }

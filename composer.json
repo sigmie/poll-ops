@@ -1,6 +1,6 @@
 {
-    "name": "sigmie/promises",
-    "description": "PHP package for handling async chains'",
+    "name": "sigmie/poll-ops",
+    "description": "PHP package for handling polled operations'",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -11,15 +11,18 @@
     ],
     "autoload": {
         "psr-4": {
-            "Sigmie\\Promises\\": "src/"
+            "Sigmie\\PollOps\\": "src/"
         },
+        "files": [
+            "src/functions.php"
+        ],
         "exclude-from-classmap": [
             "tests/"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Sigmie\\Promises\\Tests\\": "tests/"
+            "Sigmie\\PollOps\\Tests\\": "tests/"
         }
     },
     "require": {

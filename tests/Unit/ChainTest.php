@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Unit;
+namespace Sigmie\PollOps\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\Chain;
-use Sigmie\Promises\Exceptions\UnhandledRejection;
-use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
-use Sigmie\Promises\States\Fulfilled;
-use Sigmie\Promises\States\Pending;
-use Sigmie\Promises\Promise;
-use Sigmie\Promises\Tests\Fakes\FakeObject;
+use Sigmie\PollOps\Chain;
+use Sigmie\PollOps\Exceptions\UnhandledRejection;
+use Sigmie\PollOps\Exceptions\UnknownPromiseResponse;
+use Sigmie\PollOps\States\Fulfilled;
+use Sigmie\PollOps\States\Pending;
+use Sigmie\PollOps\DefaultOperation;
+use Sigmie\PollOps\Tests\Fakes\FakeObject;
 
-if (!function_exists('Sigmie\Promises\Tests\Unit\sleep')) {
+if (!function_exists('Sigmie\PollOps\Tests\Unit\sleep')) {
     function sleep()
     {
     }
@@ -23,7 +23,7 @@ class ChainTest extends TestCase
 {
     public function setUp(): void
     {
-        Pending::setSleep('Sigmie\Promises\Tests\Unit\sleep');
+        Pending::setSleep('Sigmie\PollOps\Tests\Unit\sleep');
     }
 
     /**
@@ -34,8 +34,8 @@ class ChainTest extends TestCase
         $this->expectExceptionMessage('Unhandled promise rejection');
         $this->expectException(UnhandledRejection::class);
 
-        $promise = new Promise(fn () => null);
-        $promiseMock = $this->createMock(Promise::class);
+        $promise = new DefaultOperation(fn () => null);
+        $promiseMock = $this->createMock(DefaultOperation::class);
 
         $chain = new Chain([
             $promise,
@@ -53,7 +53,7 @@ class ChainTest extends TestCase
         $this->expectException(UnknownPromiseResponse::class);
         $this->expectExceptionMessage('Unknown promise response');
 
-        $promise = new Promise(fn ($args, $resolve, $reject) => null);
+        $promise = new DefaultOperation(fn ($args, $resolve, $reject) => null);
 
         $chain = new Chain([
             $promise
@@ -71,11 +71,11 @@ class ChainTest extends TestCase
     {
         $closure = fn ($args, $resolve, $reject) => $resolve();
 
-        $promise = new Promise($closure);
-        $secondPromise = new Promise($closure);
-        $thirdPromise = new Promise($closure);
+        $promise = new DefaultOperation($closure);
+        $secondPromise = new DefaultOperation($closure);
+        $thirdPromise = new DefaultOperation($closure);
 
-        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock = $this->createMock(DefaultOperation::class);
         $promiseMock->method('execute')->willReturn(new Fulfilled([]));
 
         $chain = new Chain([
@@ -100,11 +100,11 @@ class ChainTest extends TestCase
         $resolvable = fn ($args, $resolve, $reject) => $resolve();
         $rejectable = fn ($args, $resolve, $reject) => $reject('Something went wrong!');
 
-        $promise = new Promise($resolvable);
-        $secondPromise = new Promise($resolvable);
-        $thirdPromise = new Promise($rejectable);
+        $promise = new DefaultOperation($resolvable);
+        $secondPromise = new DefaultOperation($resolvable);
+        $thirdPromise = new DefaultOperation($rejectable);
 
-        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock = $this->createMock(DefaultOperation::class);
         $promiseMock->method('execute')->willReturn(new Fulfilled([]));
 
         $chain = new Chain([
@@ -129,11 +129,11 @@ class ChainTest extends TestCase
         $fakeObjectMock = $this->createMock(FakeObject::class);
         $resolvable = fn ($args, $resolve, $reject) => $resolve();
         $rejectable = fn ($args, $resolve, $reject) => $reject('Something went wrong!');
-        $promise = new Promise($resolvable);
-        $secondPromise = new Promise($resolvable);
-        $thirdPromise = new Promise($rejectable);
+        $promise = new DefaultOperation($resolvable);
+        $secondPromise = new DefaultOperation($resolvable);
+        $thirdPromise = new DefaultOperation($rejectable);
 
-        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock = $this->createMock(DefaultOperation::class);
         $promiseMock->method('execute')->willReturn(new Fulfilled([]));
 
         $chain = new Chain([
@@ -157,11 +157,11 @@ class ChainTest extends TestCase
     {
         $resolvable = fn ($args, $resolve, $reject) => $resolve();
 
-        $promise = new Promise($resolvable);
-        $secondPromise = new Promise($resolvable, fn () => false);
-        $thirdPromise = new Promise($resolvable);
+        $promise = new DefaultOperation($resolvable);
+        $secondPromise = new DefaultOperation($resolvable, fn () => false);
+        $thirdPromise = new DefaultOperation($resolvable);
 
-        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock = $this->createMock(DefaultOperation::class);
         $promiseMock->method('execute')->willReturn(new Fulfilled([]));
 
         $chain = new Chain([

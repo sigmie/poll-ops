@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\States;
+namespace Sigmie\PollOps\States;
 
 use Closure;
 use Exception;
-use Sigmie\Promises\Exceptions\PromiseRejection;
+use Sigmie\PollOps\Exceptions\PromiseRejection;
 
 class Rejected
 {

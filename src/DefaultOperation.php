@@ -2,18 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises;
+namespace Sigmie\PollOps;
 
 use Closure;
-use Sigmie\Promises\Contracts\Promise as PromiseInterface;
-use Sigmie\Promises\States\Pending;
-use Sigmie\Promises\States\Rejected;
+use Sigmie\PollOps\Contracts\Operation as PromiseInterface;
+use Sigmie\PollOps\States\Pending;
+use Sigmie\PollOps\States\Rejected;
 
-class Promise extends AbstractPromise implements PromiseInterface
+class DefaultOperation extends AbstractOperation implements PromiseInterface
 {
+    private int $maxAttempts = 3;
+
+    private int $attemptsInterval = 30;
+
     /**
      * Verification closure which can also be null
-     * if the promises doesn't need verification
+     * if the PollOps doesn't need verification
      *
      * @var null|Closure
      */
@@ -51,6 +55,11 @@ class Promise extends AbstractPromise implements PromiseInterface
         return ($this->execute)($args, $resolve, $reject);
     }
 
+    public function proceed()
+    {
+        return ($this->execute)();
+    }
+
     /**
      * Promise verification method
      *
@@ -66,23 +75,29 @@ class Promise extends AbstractPromise implements PromiseInterface
     }
 
     /**
-     * Maximum attempts for generic promises
+     * Maximum attempts for generic PollOps
      *
      * @return int
      */
-    public function maxAttempts(): int
+    public function maxAttempts(?int $maxAttempts = null): int
     {
-        return 3;
+        if ($maxAttempts !== null) {
+            $this->maxAttempts = $maxAttempts;
+        }
+
+        return $this->maxAttempts;
     }
 
     /**
      * Generic promise attempts interval
-     *
-     * @return int
      */
-    public function attemptsInterval(): int
+    public function attemptsInterval(?int $attemptsInterval = null): int
     {
-        return 30;
+        if ($attemptsInterval !== null) {
+            $this->attemptsInterval = $attemptsInterval;
+        }
+
+        return $this->attemptsInterval;
     }
 
     /**

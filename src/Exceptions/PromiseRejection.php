@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Exceptions;
+namespace Sigmie\PollOps\Exceptions;
 
 use Exception;
 

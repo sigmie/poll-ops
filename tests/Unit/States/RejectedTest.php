@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Unit;
+namespace Sigmie\PollOps\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\Exceptions\PromiseRejection;
-use Sigmie\Promises\States\Rejected;
-use Sigmie\Promises\States\Settled;
-use Sigmie\Promises\Tests\Fakes\FakeObject;
+use Sigmie\PollOps\Exceptions\PromiseRejection;
+use Sigmie\PollOps\States\Rejected;
+use Sigmie\PollOps\States\Settled;
+use Sigmie\PollOps\Tests\Fakes\FakeObject;
 
 class RejectedTest extends TestCase
 {
