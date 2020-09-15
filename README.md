@@ -2,29 +2,29 @@
 
 <p align="center">
 <a href="https://github.com/sigmie/cli/actions?query=workflow%3ABuild">
-<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/sigmie/promises/Build">
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/sigmie/PollOps/Build">
 </a>
 
-<a href="https://codecov.io/gh/sigmie/promises">
-  <img alt="Codecov" src="https://img.shields.io/codecov/c/github/sigmie/promises">
+<a href="https://codecov.io/gh/sigmie/PollOps">
+  <img alt="Codecov" src="https://img.shields.io/codecov/c/github/sigmie/PollOps">
 </a>
 
-<a href="https://packagist.org/packages/sigmie/promises">
-  <img src="https://img.shields.io/packagist/v/sigmie/promises" alt="version"/>
+<a href="https://packagist.org/packages/sigmie/PollOps">
+  <img src="https://img.shields.io/packagist/v/sigmie/PollOps" alt="version"/>
 </a>
 
-<a href="https://packagist.org/packages/sigmie/promises">
+<a href="https://packagist.org/packages/sigmie/PollOps">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"/>
 </a>
 
 </p>
 
-# Promises
+# PollOps
 
-Promises library is php a library for actions chain actions which need to happen synchronously and each of this actions needs a verifications that it's been successful.
+PollOps library is php a library for actions chain actions which need to happen synchronously and each of this actions needs a verifications that it's been successful.
 
 ## Documentation
-All the documentation lives on the [website](https://docs.sigmie.com/promises) which you can improve it by sending pull requests to [this repository](https://github.com/sigmie/docs).
+All the documentation lives on the [website](https://docs.sigmie.com/pollops) which you can improve it by sending pull requests to [this repository](https://github.com/sigmie/docs).
 
 ## Contact
  For any question regarding this project feel free to send an e-mail to nico@sigmie.com.

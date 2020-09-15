@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Contracts;
+namespace Sigmie\PollOps\Contracts;
 
 use Closure;
-use Sigmie\Promises\States\Pending;
-use Sigmie\Promises\States\Rejected;
-use Sigmie\Promises\States\Settled;
+use Sigmie\PollOps\States\Pending;
+use Sigmie\PollOps\States\Rejected;
+use Sigmie\PollOps\States\Settled;
 
-interface Promise
+interface Operation
 {
     /**
      * Setter for the successor promise
      *
-     * @param Promise $successor
+     * @param Operation $successor
      *
      * @return void
      */
-    public function setSuccessor(Promise $successor): void;
+    public function setSuccessor(Operation $successor): void;
 
     /**
      * Promise execution

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Fakes;
+namespace Sigmie\PollOps\Tests\Fakes;
 
 class FakeObject
 {

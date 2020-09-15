@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\States;
+namespace Sigmie\PollOps\States;
 
 class Fulfilled
 {

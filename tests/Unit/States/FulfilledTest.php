@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Unit;
+namespace Sigmie\PollOps\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\States\Fulfilled;
+use Sigmie\PollOps\States\Fulfilled;
 
 class FulfilledTest extends TestCase
 {

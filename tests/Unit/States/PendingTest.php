@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Unit;
+namespace Sigmie\PollOps\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\AbstractPromise;
-use Sigmie\Promises\States\Fulfilled;
-use Sigmie\Promises\States\Pending;
+use Sigmie\PollOps\AbstractOperation;
+use Sigmie\PollOps\States\Fulfilled;
+use Sigmie\PollOps\States\Pending;
 
 
-if (!function_exists('Sigmie\Promises\Tests\Unit\sleep')) {
+if (!function_exists('Sigmie\PollOps\Tests\Unit\sleep')) {
     function sleep()
     {
     }
@@ -23,7 +23,7 @@ class PendingTest extends TestCase
      */
     public function setUp(): void
     {
-        Pending::setSleep('Sigmie\Promises\Tests\Unit\sleep');
+        Pending::setSleep('Sigmie\PollOps\Tests\Unit\sleep');
     }
 
     /**
@@ -31,7 +31,7 @@ class PendingTest extends TestCase
      */
     public function settle_calls_promise_verify(): void
     {
-        $promiseMock = $this->createMock(AbstractPromise::class);
+        $promiseMock = $this->createMock(AbstractOperation::class);
         $promiseMock->method('verify')->willReturn(true);
         $promiseMock->method('maxAttempts')->willReturn(3);
         $promiseMock->method('attemptsInterval')->willReturn(10);
@@ -48,7 +48,7 @@ class PendingTest extends TestCase
      */
     public function settle_calls_promise_verify_max_times_before_returning_false(): void
     {
-        $promiseMock = $this->createMock(AbstractPromise::class);
+        $promiseMock = $this->createMock(AbstractOperation::class);
         $promiseMock->method('verify')->willReturn(false);
         $promiseMock->method('maxAttempts')->willReturn(3);
         $promiseMock->method('attemptsInterval')->willReturn(10);
@@ -65,7 +65,7 @@ class PendingTest extends TestCase
      */
     public function fulfilled_response_on_verification_success()
     {
-        $promiseMock = $this->createMock(AbstractPromise::class);
+        $promiseMock = $this->createMock(AbstractOperation::class);
         $promiseMock->method('verify')->willReturn(true);
         $promiseMock->method('maxAttempts')->willReturn(3);
         $promiseMock->method('attemptsInterval')->willReturn(10);

@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises;
+namespace Sigmie\PollOps;
 
 use Closure;
-use Sigmie\Promises\States\Pending;
-use Sigmie\Promises\States\Fulfilled;
-use Sigmie\Promises\States\Rejected;
-use Sigmie\Promises\States\Settled;
-use Sigmie\Promises\Contracts\Promise as PromiseInterface;
-use Sigmie\Promises\Exceptions\PromiseRejection;
-use Sigmie\Promises\Exceptions\UnknownPromiseResponse;
+use Sigmie\PollOps\States\Pending;
+use Sigmie\PollOps\States\Fulfilled;
+use Sigmie\PollOps\States\Rejected;
+use Sigmie\PollOps\States\Settled;
+use Sigmie\PollOps\Contracts\Operation as PromiseInterface;
+use Sigmie\PollOps\Exceptions\PromiseRejection;
+use Sigmie\PollOps\Exceptions\UnknownPromiseResponse;
 
-abstract class AbstractPromise implements PromiseInterface
+abstract class AbstractOperation implements PromiseInterface
 {
     /**
      * Promise successor
      *
-     * @var null|PromiseInterface
+     * @var PromiseInterface|null
      */
     private ?PromiseInterface $successor = null;
 
@@ -42,7 +42,7 @@ abstract class AbstractPromise implements PromiseInterface
     /**
      * Handle promise chain part
      *
-     * @param array $args
+     * @param array<array-key, mixed> $args
      * @param Closure $catch
      *
      * @return Settled
@@ -86,13 +86,13 @@ abstract class AbstractPromise implements PromiseInterface
     /**
      * Promise execution
      *
-     * @param array $args
+     * @param array<array-key, mixed> $args
      * @param Closure $resolve
      * @param Closure $reject
      *
      * @return Pending|Rejected
      */
-    abstract public function execute(array $args, closure $resolve, closure $reject);
+    abstract public function execute(array $args, Closure $resolve, Closure $reject);
 
     /**
      * Promise verification

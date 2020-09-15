@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Sigmie\Promises\Tests\Unit;
+namespace Sigmie\PollOps\Tests\Unit;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Sigmie\Promises\Promise;
-use Sigmie\Promises\Tests\Fakes\FakeObject;
+use Sigmie\PollOps\DefaultOperation;
+use Sigmie\PollOps\Tests\Fakes\FakeObject;
 
 class PromiseTest extends TestCase
 {
@@ -17,7 +17,7 @@ class PromiseTest extends TestCase
     private $mock;
 
     /**
-     * @var Promise
+     * @var DefaultOperation
      */
     private $promise;
 
@@ -27,7 +27,7 @@ class PromiseTest extends TestCase
     public function setUp(): void
     {
         $this->mock = $this->createMock(FakeObject::class);
-        $this->promise = new Promise(fn () => $this->mock->someMethod());
+        $this->promise = new DefaultOperation(fn () => $this->mock->someMethod());
     }
 
     /**
@@ -77,7 +77,7 @@ class PromiseTest extends TestCase
      */
     public function verify_returns_passed_callback_return()
     {
-        $promise = new Promise(fn () => $this->mock->someMethod(), fn () => $this->mock->anotherMethod());
+        $promise = new DefaultOperation(fn () => $this->mock->someMethod(), fn () => $this->mock->anotherMethod());
 
         $this->mock->method('anotherMethod')->willReturn(false);
 
