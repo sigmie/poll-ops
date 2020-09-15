@@ -23,6 +23,13 @@ abstract class AbstractOperation implements PromiseInterface
     private ?PromiseInterface $successor = null;
 
     /**
+     * Promise execution code
+     *
+     * @var Closure
+     */
+    protected Closure $execute;
+
+    /**
      * Method implementing the CoR pattern for
      * creating promise chains
      *
@@ -37,6 +44,11 @@ abstract class AbstractOperation implements PromiseInterface
         }
 
         $this->successor->setSuccessor($successor);
+    }
+
+    public function proceed()
+    {
+        return ($this->execute)();
     }
 
     /**

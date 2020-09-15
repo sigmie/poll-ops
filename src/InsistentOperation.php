@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps;
 
-use Closure;
-
-class InsistentOperation
+class InsistentOperation extends DefaultOperation
 {
+    use VerifiesOperation;
+
     /**
      * Max attempt tries
      *
@@ -35,8 +35,6 @@ class InsistentOperation
      */
     private static $sleep = 'sleep';
 
-    protected Closure $closure;
-
     /**
      * Static sleep setter for testing purposes
      *
@@ -49,14 +47,9 @@ class InsistentOperation
         self::$sleep = $sleep;
     }
 
-    public function __construct(Closure $closure)
-    {
-        $this->closure = $closure;
-    }
-
     public function run(): bool
     {
-        return ($this->closure)();
+        return ($this->execute)();
     }
 
     public function delay(int $seconds)
@@ -73,11 +66,6 @@ class InsistentOperation
         return $this;
     }
 
-    /**
-     * Insistence code
-     *
-     * @return bool
-     */
     final public function proceed(): bool
     {
         call_user_func(self::$sleep, $this->delay);

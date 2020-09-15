@@ -8,8 +8,9 @@ use Closure;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Sigmie\PollOps\Chain;
+use Sigmie\PollOps\DefaultOperation;
 use Sigmie\PollOps\InsistentOperation;
-use Sigmie\PollOps\OperationBuilder;
+use Sigmie\PollOps\OperationExecutor;
 use Sigmie\PollOps\States\Pending;
 use Sigmie\PollOps\Tests\Fakes\ClosureMockTrait;
 use Sigmie\PollOps\Tests\Fakes\SleepMockTrait;
@@ -34,6 +35,16 @@ class FunctionsTest extends TestCase
     }
 
     /**
+    * @test
+    */
+    public function operation_accepts_operation_instance()
+    {
+        $this->expectClosureCalledOnce();
+
+        operation(new DefaultOperation($this->closureMock))->proceed();
+    }
+
+    /**
      * @test
      */
     public function operation_max_attemps()
@@ -41,7 +52,7 @@ class FunctionsTest extends TestCase
         $operation = operation($this->closureMock)
             ->maxAttempts(3)
             ->attempsInterval(90)
-            ->get();
+            ->create();
 
         $this->assertEquals(3, $operation->maxAttempts());
         $this->assertEquals(90, $operation->attemptsInterval());
@@ -89,7 +100,7 @@ class FunctionsTest extends TestCase
      */
     public function operation_returns_operation_builder()
     {
-        $this->assertInstanceOf(OperationBuilder::class, operation($this->closureMock));
+        $this->assertInstanceOf(OperationExecutor::class, operation($this->closureMock));
     }
 
     /**
@@ -103,6 +114,18 @@ class FunctionsTest extends TestCase
 
         insist($this->closureMock)
             ->tries(3)->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function proceed_returns_callback_value()
+    {
+        $this->closureWillReturn('foo-bar');
+
+        $result = operation($this->closureMock)->proceed();
+
+        $this->assertEquals('foo-bar', $result);
     }
 
     /**

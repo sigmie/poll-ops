@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Sigmie\PollOps;
 
 use Closure;
-use Sigmie\PollOps\States\Fulfilled;
-use Sigmie\PollOps\States\Pending;
-use Sigmie\PollOps\States\Rejected;
 
-class OperationBuilder
+class OperationExecutor
 {
-    private Closure $action;
+    use VerifiesOperation;
+
+    private $operation;
 
     private Closure $verifyAction;
 
@@ -25,14 +24,14 @@ class OperationBuilder
 
     private ?int $attemptsInterval = null;
 
-    public function __construct(Closure $action)
+    public function __construct($operation)
     {
+        $this->operation = $operation;
+
         $this->verifyAction = fn () => true;
         $this->catch = fn () => null;
         $this->then = fn () => null;
         $this->finally = fn () => null;
-
-        $this->action = $action;
     }
 
     public function verify(Closure $action): self
@@ -77,9 +76,9 @@ class OperationBuilder
         return $this;
     }
 
-    public function get()
+    public function create()
     {
-        $operation = new DefaultOperation($this->action, $this->verifyAction);
+        $operation = new DefaultOperation($this->operation, $this->verifyAction);
 
         if ($this->maxAttempts !== null) {
             $operation->maxAttempts($this->maxAttempts);
@@ -94,21 +93,26 @@ class OperationBuilder
 
     public function proceed()
     {
-        $operation = $this->get();
+        $operation = $this->operation;
 
-        $operation->proceed();
-
-        $pendingOperation = new Pending([], $operation);
-        $operationResult =  $pendingOperation->settle();
-
-        if ($operationResult instanceof Rejected) {
-            ($this->catch)();
+        if ($this->operation instanceof Closure) {
+            $operation = $this->create();
         }
 
-        if ($operationResult instanceof Fulfilled) {
+        $result = $operation->proceed();
+
+        $verified = $this->verifyOperation($operation);
+
+        if ($verified === true) {
             ($this->then)();
         }
 
+        if ($verified === false) {
+            ($this->catch)();
+        }
+
         ($this->finally)();
+
+        return $result;
     }
 }

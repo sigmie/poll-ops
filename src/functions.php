@@ -17,9 +17,9 @@ function insist(Closure $closure): InsistentOperation
 /**
  * Operation function
  */
-function operation(Closure $closure): OperationBuilder
+function operation($operation): OperationExecutor
 {
-    $builder = new OperationBuilder($closure);
+    $builder = new OperationExecutor($operation);
 
     return $builder;
 }

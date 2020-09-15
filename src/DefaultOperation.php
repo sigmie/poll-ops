@@ -24,13 +24,6 @@ class DefaultOperation extends AbstractOperation implements PromiseInterface
     private ?Closure $verify;
 
     /**
-     * Promise execution code
-     *
-     * @var Closure
-     */
-    private Closure $execute;
-
-    /**
      * Constructor
      *
      * @param Closure $execute
@@ -53,11 +46,6 @@ class DefaultOperation extends AbstractOperation implements PromiseInterface
     public function execute($args, Closure $resolve, Closure $reject)
     {
         return ($this->execute)($args, $resolve, $reject);
-    }
-
-    public function proceed()
-    {
-        return ($this->execute)();
     }
 
     /**
