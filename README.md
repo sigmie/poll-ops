@@ -2,18 +2,18 @@
 
 <p align="center">
 <a href="https://github.com/sigmie/cli/actions?query=workflow%3ABuild">
-<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/sigmie/PollOps/Build">
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/sigmie/poll-ops/Build">
 </a>
 
-<a href="https://codecov.io/gh/sigmie/PollOps">
-  <img alt="Codecov" src="https://img.shields.io/codecov/c/github/sigmie/PollOps">
+<a href="https://codecov.io/gh/sigmie/poll-ops">
+  <img alt="Codecov" src="https://img.shields.io/codecov/c/github/sigmie/poll-ops">
 </a>
 
-<a href="https://packagist.org/packages/sigmie/PollOps">
-  <img src="https://img.shields.io/packagist/v/sigmie/PollOps" alt="version"/>
+<a href="https://packagist.org/packages/sigmie/poll-ops">
+  <img src="https://img.shields.io/packagist/v/sigmie/poll-ops" alt="version"/>
 </a>
 
-<a href="https://packagist.org/packages/sigmie/PollOps">
+<a href="https://packagist.org/packages/sigmie/poll-ops">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"/>
 </a>
 
