@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps\Tests\Unit;
 
-use Closure;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Sigmie\PollOps\Chain;
 use Sigmie\PollOps\DefaultOperation;
+use Sigmie\PollOps\Exceptions\PromiseRejection;
 use Sigmie\PollOps\InsistentOperation;
 use Sigmie\PollOps\OperationExecutor;
+use Sigmie\PollOps\States\Fulfilled;
 use Sigmie\PollOps\States\Pending;
 use Sigmie\PollOps\Tests\Fakes\ClosureMockTrait;
+use Sigmie\PollOps\Tests\Fakes\FakeOperation;
 use Sigmie\PollOps\Tests\Fakes\SleepMockTrait;
 
 use function Sigmie\PollOps\chain;
@@ -35,10 +36,65 @@ class FunctionsTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
+    public function operation_is_void()
+    {
+        $this->assertNull(operation(fn () => 'foo-bar')->proceed());
+    }
+
+    /**
+     * @test
+     */
+    public function operation_executes_operation_instance_and_caches_on_rejection()
+    {
+        $this->expectClosureCalledTimes(3);
+
+        $verifyResult = false;
+
+        operation(new FakeOperation($this->closureMock, $verifyResult))
+            ->catch(fn (PromiseRejection $promiseRejection) => ($this->closureMock)())
+            ->then(fn () => null)
+            ->finally(fn () => ($this->closureMock)())
+            ->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function operation_executes_operation_instance_and_calls_then_callback()
+    {
+        $this->expectClosureCalledTimes(3);
+
+        $verifyResult = true;
+
+        operation(new FakeOperation($this->closureMock, $verifyResult))
+            ->then(fn () => ($this->closureMock)())
+            ->catch(fn () => null)
+            ->finally(fn () => ($this->closureMock)())
+            ->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function operation_executes_operation_instance()
+    {
+        $this->expectClosureCalledOnce();
+
+        $verifyResult = true;
+
+        operation(new FakeOperation($this->closureMock, $verifyResult))
+            ->proceed();
+    }
+
+    /**
+     * @test
+     */
     public function operation_accepts_operation_instance()
     {
+        $this->closureWillReturn(new Fulfilled([]));
+
         $this->expectClosureCalledOnce();
 
         operation(new DefaultOperation($this->closureMock))->proceed();
@@ -114,18 +170,6 @@ class FunctionsTest extends TestCase
 
         insist($this->closureMock)
             ->tries(3)->proceed();
-    }
-
-    /**
-     * @test
-     */
-    public function proceed_returns_callback_value()
-    {
-        $this->closureWillReturn('foo-bar');
-
-        $result = operation($this->closureMock)->proceed();
-
-        $this->assertEquals('foo-bar', $result);
     }
 
     /**
