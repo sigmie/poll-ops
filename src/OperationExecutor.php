@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Sigmie\PollOps;
 
 use Closure;
+use Sigmie\PollOps\Contracts\Operation;
+use Sigmie\PollOps\States\Fulfilled;
 
 class OperationExecutor
 {
@@ -91,28 +93,45 @@ class OperationExecutor
         return $operation;
     }
 
-    public function proceed()
+    private function handleOperationInstance($args)
     {
-        $operation = $this->operation;
+        $this->operation->setSuccessor(new DefaultOperation(fn () => $this->callThen()));
 
-        if ($this->operation instanceof Closure) {
-            $operation = $this->create();
-        }
+        $this->operation->handle($args, $this->catch);
+    }
 
-        $result = $operation->proceed();
+    private function callThen()
+    {
+        ($this->then)();
+
+        return new Fulfilled([]);
+    }
+
+    private function handleClosureOperation($args)
+    {
+        $operation = $this->create();
+
+        $operation->proceed($args);
 
         $verified = $this->verifyOperation($operation);
 
         if ($verified === true) {
-            ($this->then)();
+            $this->callThen();
         }
 
         if ($verified === false) {
             ($this->catch)();
         }
+    }
+
+    public function proceed(...$args): void
+    {
+        if ($this->operation instanceof Closure) {
+            $this->handleClosureOperation($args);
+        } elseif ($this->operation instanceof Operation) {
+            $this->handleOperationInstance($args);
+        }
 
         ($this->finally)();
-
-        return $result;
     }
 }
