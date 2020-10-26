@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps\Tests\Unit;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Sigmie\PollOps\Chain;
 use Sigmie\PollOps\DefaultOperation;
@@ -170,6 +171,38 @@ class FunctionsTest extends TestCase
 
         insist($this->closureMock)
             ->tries(3)->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function insistent_breaks_on_exception()
+    {
+        $callback = function () {
+            throw new Exception('Something went wrong');
+        };
+
+        $this->expectException(Exception::class);
+
+        insist($callback)
+            ->tries(3)->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function insistent_catch_ignores_exception()
+    {
+        $callback = function () {
+            throw new Exception('Something went wrong');
+        };
+
+        insist($callback)
+            ->catchExceptions()
+            ->tries(3)->proceed();
+
+        //No exception was thrown
+        $this->addToAssertionCount(1);
     }
 
     /**

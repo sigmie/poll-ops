@@ -46,7 +46,7 @@ class OperationTest extends TestCase
      */
     public function insist_uses_max_attempts_and_returns_false_if_run_wasnt_successful(): void
     {
-        $this->operation->expects($this->exactly(30))->method('run')->willReturn(false);
+        $this->operation->expects($this->exactly(15))->method('run')->willReturn(false);
 
         $this->assertFalse($this->operation->proceed());
     }
@@ -58,7 +58,7 @@ class OperationTest extends TestCase
     {
         $this->assertFalse($this->operation->proceed());
 
-        $this->assertEquals(31, self::$sleepCount);
+        $this->assertEquals(16, self::$sleepCount);
     }
 
     /**
