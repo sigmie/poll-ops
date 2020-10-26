@@ -24,7 +24,7 @@
 PollOps library is php a library for actions chain actions which need to happen synchronously and each of this actions needs a verifications that it's been successful.
 
 ## Documentation
-All the documentation lives on the [website](https://docs.sigmie.com/pollops) which you can improve it by sending pull requests to [this repository](https://github.com/sigmie/docs).
+All the documentation lives on the [website](https://docs.sigmie.com/packages/polledops.html) which you can improve by sending pull requests to [this repository](https://github.com/sigmie/docs).
 
 ## Contact
  For any question regarding this project feel free to send an e-mail to nico@sigmie.com.

@@ -51,7 +51,7 @@ class PromiseTest extends TestCase
      */
     public function promise_exception_message()
     {
-        $this->assertEquals('Promise fulfilment couldn\'t be verified', $this->promise->exceptionMessage());
+        $this->assertEquals('Operation fulfilment couldn\'t be verified', $this->promise->exceptionMessage());
     }
 
     /**

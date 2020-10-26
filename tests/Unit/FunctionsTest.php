@@ -104,11 +104,11 @@ class FunctionsTest extends TestCase
     /**
      * @test
      */
-    public function operation_max_attemps()
+    public function operation_max_attempts()
     {
         $operation = operation($this->closureMock)
             ->maxAttempts(3)
-            ->attempsInterval(90)
+            ->attemptsInterval(90)
             ->create();
 
         $this->assertEquals(3, $operation->maxAttempts());
@@ -140,6 +140,22 @@ class FunctionsTest extends TestCase
     public function chain_returns_chain_instance()
     {
         $this->assertInstanceOf(Chain::class, chain([]));
+    }
+
+    /**
+     * @test
+     */
+    public function operation_chaining_catches()
+    {
+        $this->expectClosureCalledOnce();
+
+        chain([
+            new FakeOperation(fn () => null),
+            new FakeOperation(fn () => null, false), // This operation rejects 
+            new FakeOperation(fn () => null),
+        ])->catch(function () {
+            ($this->closureMock)();
+        })->proceed();
     }
 
     /**
