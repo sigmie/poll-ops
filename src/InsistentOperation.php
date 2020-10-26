@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps;
 
+use Throwable;
+
 class InsistentOperation extends DefaultOperation
 {
     use VerifiesOperation;
@@ -13,22 +15,26 @@ class InsistentOperation extends DefaultOperation
      *
      * @var int
      */
-    protected $tries = 30;
+    protected $tries = 15;
     /**
-
      * Seconds after which the task should
      * be retried
      *
      * @var int
      */
-    protected $retryAfter = 15;
+    protected $retryAfter = 3;
+
+    /**
+     * Flag if an exception should be thrown
+     */
+    protected $catchExceptions = false;
 
     /**
      * Initial delay before attempt to run
      *
      * @var int
      */
-    protected $delay = 90;
+    protected $delay = 0;
 
     /**
      * @var callable
@@ -66,6 +72,20 @@ class InsistentOperation extends DefaultOperation
         return $this;
     }
 
+    public function catchExceptions()
+    {
+        $this->catchExceptions = true;
+
+        return $this;
+    }
+
+    public function retryAfter(int $seconds)
+    {
+        $this->retryAfter = $seconds;
+
+        return $this;
+    }
+
     final public function proceed(): bool
     {
         call_user_func(self::$sleep, $this->delay);
@@ -74,7 +94,14 @@ class InsistentOperation extends DefaultOperation
         $attempts = 0;
 
         while ($attempts < $this->tries) {
-            $result = $this->run();
+            try {
+                $result = $this->run();
+            } catch (Throwable $throwable) {
+                if ($this->catchExceptions === false) {
+                    throw $throwable;
+                }
+            }
+
             if ($result) {
                 break;
             }

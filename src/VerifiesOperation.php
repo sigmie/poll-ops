@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps;
 
+use Exception;
 use Sigmie\PollOps\Contracts\Operation;
 use Sigmie\PollOps\States\Fulfilled;
 use Sigmie\PollOps\States\Pending;
@@ -24,5 +25,7 @@ trait VerifiesOperation
         if ($operationResult instanceof Fulfilled) {
             return true;
         }
+
+        throw new Exception('Operation couldn\'t be verified');
     }
 }

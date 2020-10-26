@@ -50,7 +50,7 @@ class OperationExecutor
         return $this;
     }
 
-    public function attempsInterval(int $attempts): self
+    public function attemptsInterval(int $attempts): self
     {
         $this->attemptsInterval = $attempts;
 

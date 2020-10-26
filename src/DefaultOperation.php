@@ -95,6 +95,6 @@ class DefaultOperation extends AbstractOperation implements PromiseInterface
      */
     public function exceptionMessage(): string
     {
-        return 'Promise fulfilment couldn\'t be verified';
+        return 'Operation fulfilment couldn\'t be verified';
     }
 }

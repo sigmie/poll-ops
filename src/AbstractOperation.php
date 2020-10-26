@@ -126,11 +126,4 @@ abstract class AbstractOperation implements PromiseInterface
      * @return int
      */
     abstract public function attemptsInterval(): int;
-
-    /**
-     * Promise rejection exception message
-     *
-     * @return string
-     */
-    abstract public function exceptionMessage(): string;
 }

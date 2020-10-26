@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps\Tests\Unit;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Sigmie\PollOps\Chain;
 use Sigmie\PollOps\DefaultOperation;
@@ -103,11 +104,11 @@ class FunctionsTest extends TestCase
     /**
      * @test
      */
-    public function operation_max_attemps()
+    public function operation_max_attempts()
     {
         $operation = operation($this->closureMock)
             ->maxAttempts(3)
-            ->attempsInterval(90)
+            ->attemptsInterval(90)
             ->create();
 
         $this->assertEquals(3, $operation->maxAttempts());
@@ -144,6 +145,22 @@ class FunctionsTest extends TestCase
     /**
      * @test
      */
+    public function operation_chaining_catches()
+    {
+        $this->expectClosureCalledOnce();
+
+        chain([
+            new FakeOperation(fn () => null),
+            new FakeOperation(fn () => null, false), // This operation rejects 
+            new FakeOperation(fn () => null),
+        ])->catch(function () {
+            ($this->closureMock)();
+        })->proceed();
+    }
+
+    /**
+     * @test
+     */
     public function closure_called_once_if_not_verify()
     {
         $this->expectClosureCalledOnce();
@@ -170,6 +187,38 @@ class FunctionsTest extends TestCase
 
         insist($this->closureMock)
             ->tries(3)->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function insistent_breaks_on_exception()
+    {
+        $callback = function () {
+            throw new Exception('Something went wrong');
+        };
+
+        $this->expectException(Exception::class);
+
+        insist($callback)
+            ->tries(3)->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function insistent_catch_ignores_exception()
+    {
+        $callback = function () {
+            throw new Exception('Something went wrong');
+        };
+
+        insist($callback)
+            ->catchExceptions()
+            ->tries(3)->proceed();
+
+        //No exception was thrown
+        $this->addToAssertionCount(1);
     }
 
     /**
