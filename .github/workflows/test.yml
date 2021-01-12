@@ -32,7 +32,7 @@ jobs:
        key: composer-${{ hashFiles('**/composer.json') }}
 
     - name: Validate composer and install dependecies
-      run: composer validate && composer update --prefer-dist --no-interaction --no-progress
+      run: composer update --prefer-dist --no-interaction --no-progress
 
     - name: PHPStan
       run: vendor/bin/phpstan analyse src
