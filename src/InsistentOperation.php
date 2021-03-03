@@ -53,7 +53,7 @@ class InsistentOperation extends DefaultOperation
         self::$sleep = $sleep;
     }
 
-    public function run(): bool
+    public function run(): mixed
     {
         return ($this->execute)();
     }
@@ -86,7 +86,7 @@ class InsistentOperation extends DefaultOperation
         return $this;
     }
 
-    final public function proceed(): bool
+    final public function proceed(): mixed
     {
         call_user_func(self::$sleep, $this->delay);
 
