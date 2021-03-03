@@ -56,7 +56,7 @@ class OperationTest extends TestCase
      */
     public function is_called_for_each_try_and_before_any_attempt()
     {
-        $this->assertFalse($this->operation->proceed());
+        $this->assertNull($this->operation->proceed());
 
         $this->assertEquals(16, self::$sleepCount);
     }
