@@ -5,4 +5,5 @@ parameters:
 	ignoreErrors:
 		# AbstractPromise throw new UnknownPromiseResponse() is
 		# reachable is promise execute returns null
+		- '/Call to an undefined method ReflectionType::getName\(\)./'
 		- '/Unreachable statement - code above always terminates./'

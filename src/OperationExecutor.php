@@ -6,6 +6,7 @@ namespace Sigmie\PollOps;
 
 use Closure;
 use ReflectionFunction;
+use ReflectionType;
 use Sigmie\PollOps\Contracts\Operation;
 use Sigmie\PollOps\States\Fulfilled;
 use Throwable;
@@ -168,7 +169,17 @@ class OperationExecutor
             return true;
         }
 
-        return is_subclass_of($e, $typeHint, false) || $e instanceof $typeHint;
+        if (is_subclass_of($e, $typeHint, false))
+        {
+            return true;
+        }
+
+        if ($e instanceof $typeHint)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private function handleClosureOperation(...$args)
@@ -196,6 +207,8 @@ class OperationExecutor
 
     public function proceed(...$args): mixed
     {
+        $result = null;
+
         if ($this->operation instanceof Closure) {
             $result = $this->handleClosureOperation(...$args);
         } elseif ($this->operation instanceof Operation) {
