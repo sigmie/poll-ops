@@ -109,7 +109,6 @@ class OperationExecutor
     {
         foreach ($this->catch as $catch) {
             if ($this->hasThrowableType($catch, $e)) {
-
                 $catch($e);
 
                 return $e;
@@ -133,7 +132,6 @@ class OperationExecutor
             };
             $res = $this->operation->handle($args, $catch);
         } catch (Throwable $e) {
-
             $this->handleThrowable($e);
         }
     }
@@ -169,13 +167,11 @@ class OperationExecutor
             return true;
         }
 
-        if (is_subclass_of($e, $typeHint, false))
-        {
+        if (is_subclass_of($e, $typeHint, false)) {
             return true;
         }
 
-        if ($e instanceof $typeHint)
-        {
+        if ($e instanceof $typeHint) {
             return true;
         }
 

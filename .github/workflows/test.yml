@@ -38,7 +38,7 @@ jobs:
       run: vendor/bin/phpstan analyse src
 
     - name: PHPCS
-      run: vendor/bin/phpcs --standard=standard.xml src
+      run: vendor/bin/phpcs --standard=PSR2 src
 
     - name: PHPUnit
       run: vendor/bin/phpunit -c phpunit.xml
