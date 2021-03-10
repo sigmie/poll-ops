@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Sigmie\PollOps;
 
 use Closure;
+use ReflectionFunction;
 use Sigmie\PollOps\Contracts\Operation;
 use Sigmie\PollOps\States\Fulfilled;
+use Throwable;
 
 class OperationExecutor
 {
@@ -18,7 +20,7 @@ class OperationExecutor
 
     private Closure $verifyAction;
 
-    private Closure $catch;
+    private array $catch;
 
     private Closure $then;
 
@@ -40,7 +42,7 @@ class OperationExecutor
         $this->operation = $operation;
 
         $this->verifyAction = fn () => true;
-        $this->catch = fn () => null;
+        $this->catch = [];
         $this->then = fn () => null;
         $this->finally = fn () => null;
     }
@@ -68,7 +70,7 @@ class OperationExecutor
 
     public function catch(Closure $catch): self
     {
-        $this->catch = $catch;
+        $this->catch[] = $catch;
 
         return $this;
     }
@@ -102,6 +104,20 @@ class OperationExecutor
         return $operation;
     }
 
+    private function handleThrowable(Throwable $e)
+    {
+        foreach ($this->catch as $catch) {
+            if ($this->hasThrowableType($catch, $e)) {
+
+                $catch($e);
+
+                return $e;
+            }
+        }
+
+        throw $e;
+    }
+
     private function handleOperationInstance($args)
     {
         if ($this->operation instanceof InsistentOperation) {
@@ -110,7 +126,15 @@ class OperationExecutor
 
         $this->operation->setSuccessor(new DefaultOperation(fn () => $this->callThen()));
 
-        $this->operation->handle($args, $this->catch);
+        try {
+            $catch = function ($e) {
+                $this->handleThrowable($e);
+            };
+            $res = $this->operation->handle($args, $catch);
+        } catch (Throwable $e) {
+
+            $this->handleThrowable($e);
+        }
     }
 
     public function delay($delay)
@@ -127,33 +151,59 @@ class OperationExecutor
         return new Fulfilled([]);
     }
 
+    private function hasThrowableType(Closure $fn, Throwable $e)
+    {
+        $ref = new ReflectionFunction($fn);
+
+        $params = $ref->getParameters();
+
+        if (count($params) === 0) {
+            return true;
+        }
+
+        [$throwable,] = $params;
+        $typeHint = $throwable->getType()?->getName();
+
+        if (is_null($typeHint)) {
+            return true;
+        }
+
+        return is_subclass_of($e, $typeHint, false) || $e instanceof $typeHint;
+    }
+
     private function handleClosureOperation(...$args)
     {
         $operation = $this->create();
 
-        call_user_func(self::$sleep, $this->delay);
+        try {
+            call_user_func(self::$sleep, $this->delay);
 
-        $operation->proceed(...$args);
+            $operation->proceed(...$args);
 
-        $verified = $this->verifyOperation($operation);
+            $verified = $this->verifyOperation($operation);
 
-        if ($verified === true) {
-            $this->callThen();
-        }
+            if ($verified === true) {
+                $this->callThen();
+            }
 
-        if ($verified === false) {
-            ($this->catch)();
+            if ($verified === false) {
+                ($this->catch)();
+            }
+        } catch (Throwable $e) {
+            $this->handleThrowable($e);
         }
     }
 
-    public function proceed(...$args): void
+    public function proceed(...$args): mixed
     {
         if ($this->operation instanceof Closure) {
-            $this->handleClosureOperation(...$args);
+            $result = $this->handleClosureOperation(...$args);
         } elseif ($this->operation instanceof Operation) {
-            $this->handleOperationInstance($args);
+            $result = $this->handleOperationInstance($args);
         }
 
         ($this->finally)();
+
+        return $result;
     }
 }

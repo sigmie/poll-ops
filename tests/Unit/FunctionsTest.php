@@ -16,6 +16,7 @@ use Sigmie\PollOps\States\Pending;
 use Sigmie\PollOps\Tests\Fakes\ClosureMockTrait;
 use Sigmie\PollOps\Tests\Fakes\FakeOperation;
 use Sigmie\PollOps\Tests\Fakes\SleepMockTrait;
+use Throwable;
 
 use function Sigmie\PollOps\chain;
 use function Sigmie\PollOps\insist;
@@ -54,7 +55,7 @@ class FunctionsTest extends TestCase
         $verifyResult = false;
 
         operation(new FakeOperation($this->closureMock, $verifyResult))
-            ->catch(fn (PromiseRejection $promiseRejection) => ($this->closureMock)())
+            ->catch(fn ($promiseRejection) => ($this->closureMock)())
             ->then(fn () => null)
             ->finally(fn () => ($this->closureMock)())
             ->proceed();
