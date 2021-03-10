@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Sigmie\PollOps\Tests\Unit;
 
+use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Sigmie\PollOps\Exceptions\UnhandledRejection;
 use Sigmie\PollOps\InsistentOperation;
 use Sigmie\PollOps\OperationExecutor;
+use Sigmie\PollOps\Tests\Fakes\ClosureMockTrait;
 
 use function Sigmie\PollOps\operation;
 
 class OperationTest extends TestCase
 {
+    use ClosureMockTrait;
+
     /**
      * @var InsistentOperation|MockObject
      */
@@ -36,6 +42,8 @@ class OperationTest extends TestCase
     {
         parent::setUp();
 
+        $this->closure();
+
         self::$sleepCount = 0;
 
         if (!function_exists('Sigmie\PollOps\Tests\Unit\testSleep')) {
@@ -50,6 +58,50 @@ class OperationTest extends TestCase
 
         InsistentOperation::setSleep('Sigmie\PollOps\Tests\Unit\testSleep');
         OperationExecutor::setSleep('Sigmie\PollOps\Tests\Unit\testSleep');
+    }
+
+    /**
+     * @test
+     */
+    public function test_catch_without_hint()
+    {
+        $this->expectClosureCalledOnce();
+
+        operation(function () {
+            throw new \RuntimeException('Something went wrong!');
+        })->catch(function ($e) {
+            ($this->closureMock)();
+        })->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function test_multiple_catches()
+    {
+        $this->expectClosureCalledWith('runtime');
+
+        operation(function () {
+            throw new \RuntimeException('Something went wrong!');
+        })->catch(function (UnhandledRejection $e) {
+            ($this->closureMock)('exception');
+        })->catch(function (\RuntimeException $e) {
+            ($this->closureMock)('runtime');
+        })->proceed();
+    }
+
+    /**
+     * @test
+     */
+    public function test_exception_catching()
+    {
+        $this->expectClosureCalledOnce();
+
+        operation(function () {
+            throw new \Exception('Something went wrong!');
+        })->catch(function (Exception $e) {
+            ($this->closureMock)();
+        })->proceed();
     }
 
     /**
