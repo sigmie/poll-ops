@@ -7,7 +7,9 @@ namespace Sigmie\PollOps\Tests\Unit;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sigmie\PollOps\InsistentOperation;
+use Sigmie\PollOps\OperationExecutor;
 
+use function Sigmie\PollOps\operation;
 
 class OperationTest extends TestCase
 {
@@ -18,9 +20,16 @@ class OperationTest extends TestCase
 
     private static $sleepCount = 0;
 
+    private static $sleepParams = [];
+
     public static function increaseSleepCount()
     {
         self::$sleepCount++;
+    }
+
+    public static function addSleepParams(array $newParams)
+    {
+        self::$sleepParams = array_merge(self::$sleepParams, $newParams);
     }
 
     public function setUp(): void
@@ -30,15 +39,39 @@ class OperationTest extends TestCase
         self::$sleepCount = 0;
 
         if (!function_exists('Sigmie\PollOps\Tests\Unit\testSleep')) {
-            function testSleep()
+            function testSleep(...$params)
             {
                 OperationTest::increaseSleepCount();
+                OperationTest::addSleepParams($params);
             };
         }
 
         $this->operation = $this->createMock(InsistentOperation::class);
 
         InsistentOperation::setSleep('Sigmie\PollOps\Tests\Unit\testSleep');
+        OperationExecutor::setSleep('Sigmie\PollOps\Tests\Unit\testSleep');
+    }
+
+    /**
+     * @test
+     */
+    public function operation_can_be_delayed()
+    {
+        operation(fn ($arg) => $this->assertEquals('do something', $arg))
+            ->delay(10)
+            ->proceed('do something');
+
+        $this->assertEquals(1, self::$sleepCount);
+        $this->assertContains(10, self::$sleepParams);
+    }
+
+    /**
+     * @test
+     */
+    public function operation_proceed_passes_arguments()
+    {
+        operation(fn ($arg) => $this->assertEquals('do something', $arg))
+            ->proceed('do something');
     }
 
     /**

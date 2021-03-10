@@ -53,9 +53,9 @@ class InsistentOperation extends DefaultOperation
         self::$sleep = $sleep;
     }
 
-    public function run(): mixed
+    public function run(...$args): mixed
     {
-        return ($this->execute)();
+        return ($this->execute)(...$args);
     }
 
     public function delay(int $seconds)
@@ -86,7 +86,7 @@ class InsistentOperation extends DefaultOperation
         return $this;
     }
 
-    final public function proceed(): mixed
+    final public function proceed(...$args): mixed
     {
         call_user_func(self::$sleep, $this->delay);
 
@@ -95,7 +95,7 @@ class InsistentOperation extends DefaultOperation
 
         while ($attempts < $this->tries) {
             try {
-                $result = $this->run();
+                $result = $this->run(...$args);
             } catch (Throwable $throwable) {
                 if ($this->catchExceptions === false) {
                     throw $throwable;

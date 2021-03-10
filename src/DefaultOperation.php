@@ -17,7 +17,7 @@ class DefaultOperation extends AbstractOperation implements PromiseInterface
 
     /**
      * Verification closure which can also be null
-     * if the PollOps doesn't need verification
+     * if the operation doesn't need verification
      *
      * @var null|Closure
      */

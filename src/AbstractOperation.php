@@ -46,9 +46,9 @@ abstract class AbstractOperation implements PromiseInterface
         $this->successor->setSuccessor($successor);
     }
 
-    public function proceed()
+    public function proceed(...$args)
     {
-        return ($this->execute)();
+        return ($this->execute)(...$args);
     }
 
     /**

@@ -14,6 +14,8 @@ class OperationExecutor
 
     private $operation;
 
+    private int $delay = 0;
+
     private Closure $verifyAction;
 
     private Closure $catch;
@@ -22,9 +24,16 @@ class OperationExecutor
 
     private Closure $finally;
 
+    private static $sleep = 'sleep';
+
     private ?int $maxAttempts = null;
 
     private ?int $attemptsInterval = null;
+
+    public static function setSleep(callable $sleep): void
+    {
+        self::$sleep = $sleep;
+    }
 
     public function __construct($operation)
     {
@@ -95,9 +104,20 @@ class OperationExecutor
 
     private function handleOperationInstance($args)
     {
+        if ($this->operation instanceof InsistentOperation) {
+            $this->operation->delay($this->delay);
+        }
+
         $this->operation->setSuccessor(new DefaultOperation(fn () => $this->callThen()));
 
         $this->operation->handle($args, $this->catch);
+    }
+
+    public function delay($delay)
+    {
+        $this->delay = $delay;
+
+        return $this;
     }
 
     private function callThen()
@@ -107,11 +127,13 @@ class OperationExecutor
         return new Fulfilled([]);
     }
 
-    private function handleClosureOperation($args)
+    private function handleClosureOperation(...$args)
     {
         $operation = $this->create();
 
-        $operation->proceed($args);
+        call_user_func(self::$sleep, $this->delay);
+
+        $operation->proceed(...$args);
 
         $verified = $this->verifyOperation($operation);
 
@@ -127,7 +149,7 @@ class OperationExecutor
     public function proceed(...$args): void
     {
         if ($this->operation instanceof Closure) {
-            $this->handleClosureOperation($args);
+            $this->handleClosureOperation(...$args);
         } elseif ($this->operation instanceof Operation) {
             $this->handleOperationInstance($args);
         }
